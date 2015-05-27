@@ -62,10 +62,12 @@ public class MainActivity extends AppCompatActivity {
                 };
 
         // Defines a string to contain the selection clause
-        String mSelectionClause = UserDictionary.Words.LOCALE +"= ?";
+        String mSelectionClause = null;
+        //String mSelectionClause = UserDictionary.Words.LOCALE +"= ?";
 
         // Initializes an array to contain selection arguments
-        String[] mSelectionArgs = {"en_US"};
+        String[] mSelectionArgs = null;
+        //String[] mSelectionArgs = {"en_US"};
 
         // Does a query against the table and returns a Cursor object
         Cursor mCursor = getContentResolver().query(
@@ -80,26 +82,38 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "The cursor is null!");
         // If the Cursor is empty, the provider found no matches
         } else if (mCursor.getCount() < 1) {
-
             Toast.makeText(context, "No words found", Toast.LENGTH_LONG).show();
 
         } else {
-            // Change the textView
-           int index = mCursor.getColumnIndex(UserDictionary.Words.WORD);
-
-            /*
-            * Moves to the next row in the cursor. Before the first movement in the cursor, the
-            * "row pointer" is -1, and if you try to retrieve data at that position you will get an
-            * exception.
-            */
             String words = "";
-            while (mCursor.moveToNext()) {
 
-                // Gets the value from the column.
-                words += mCursor.getString(index) + " - ";
-            }
-               mCursor.close();
+            // Get the words
+            int index = mCursor.getColumnIndex(UserDictionary.Words.WORD);
+            words = iterateThroughCursor(mCursor, index, words);
+
+            // Get the Locales
+            index = mCursor.getColumnIndex(UserDictionary.Words.LOCALE);
+            words += " ------------------- ";
+            mCursor.moveToPosition(-1);
+            words = iterateThroughCursor(mCursor, index, words);
+
+            mCursor.close();
+
+            // Change the textView
             mContactsTextView.setText(words);
         }
+    }
+
+    private String iterateThroughCursor(Cursor cursor, int index, String words) {
+        /*
+        * Moves to the next row in the cursor. Before the first movement in the cursor, the
+        * "row pointer" is -1, and if you try to retrieve data at that position you will get an
+        * exception.
+        */
+        while (cursor.moveToNext()) {
+            // Gets the value from the column.
+            words += cursor.getString(index) + " - ";
+        }
+        return words;
     }
 }
