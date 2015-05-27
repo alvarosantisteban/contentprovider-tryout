@@ -62,17 +62,17 @@ public class MainActivity extends AppCompatActivity {
                 };
 
         // Defines a string to contain the selection clause
-        String mSelectionClause = null;
+        String mSelectionClause = UserDictionary.Words.LOCALE +"= ?";
 
         // Initializes an array to contain selection arguments
-        //String[] mSelectionArgs = {""};
+        String[] mSelectionArgs = {"en_US"};
 
         // Does a query against the table and returns a Cursor object
         Cursor mCursor = getContentResolver().query(
                 UserDictionary.Words.CONTENT_URI,  // The content URI of the words table
                 mProjection,                       // The columns to return for each row
                 mSelectionClause,                   // Either null, or the word the user entered
-                null,                    // Either empty, or the string the user entered
+                mSelectionArgs,                    // Either empty, or the string the user entered
                 UserDictionary.Words.WORD + " ASC");                       // The sort order for the returned rows
 
         // Some providers return null if an error occurs, others throw an exception
