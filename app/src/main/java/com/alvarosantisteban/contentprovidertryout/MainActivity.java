@@ -1,6 +1,7 @@
 package com.alvarosantisteban.contentprovidertryout;
 
 import android.content.Context;
+import android.content.CursorLoader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.UserDictionary;
@@ -69,13 +70,15 @@ public class MainActivity extends AppCompatActivity {
         String[] mSelectionArgs = null;
         //String[] mSelectionArgs = {"en_US"};
 
-        // Does a query against the table and returns a Cursor object
-        Cursor mCursor = getContentResolver().query(
+        // Does a query in background against the table and returns a Cursor object
+        Cursor mCursor = new CursorLoader(
+                context,
                 UserDictionary.Words.CONTENT_URI,  // The content URI of the words table
                 mProjection,                       // The columns to return for each row
                 mSelectionClause,                   // Either null, or the word the user entered
                 mSelectionArgs,                    // Either empty, or the string the user entered
-                UserDictionary.Words.WORD + " ASC");                       // The sort order for the returned rows
+                UserDictionary.Words.WORD + " ASC")  // The sort order for the returned rows
+                .loadInBackground();
 
         // Some providers return null if an error occurs, others throw an exception
         if (null == mCursor) {
