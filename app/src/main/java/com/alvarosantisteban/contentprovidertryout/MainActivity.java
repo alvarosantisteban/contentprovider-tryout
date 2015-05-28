@@ -51,8 +51,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void getContacts(View view) {
-        // Get contacts
+    public void getWords(View view){
         // A "projection" defines the columns that will be returned for each row
         String[] mProjection =
                 {

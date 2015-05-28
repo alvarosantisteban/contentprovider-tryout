@@ -10,11 +10,10 @@
   tools:context=".MainActivity">
 
   <Button
-    android:id="@+id/contacts_buttons"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Get contacts"
-    android:onClick="getContacts"/>
+    android:text="Get words"
+    android:onClick="getWords"/>
   <TextView
     android:id="@+id/contacts"
     android:text="@string/hello_world"
