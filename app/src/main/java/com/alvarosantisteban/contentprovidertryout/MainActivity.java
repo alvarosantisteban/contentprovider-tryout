@@ -10,13 +10,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private TextView mContactsTextView;
+
+    private ListView mUserWordsListView;
+    private ListAdapter mUserWordsCursorAdapter;
+
     private Context context;
 
     @Override
@@ -24,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mContactsTextView = (TextView)findViewById(R.id.contacts);
+        mUserWordsListView = (ListView)findViewById(R.id.userWords_list);
 
         context = this;
     }
@@ -85,27 +90,34 @@ public class MainActivity extends AppCompatActivity {
         // If the Cursor is empty, the provider found no matches
         } else if (mCursor.getCount() < 1) {
             Toast.makeText(context, "No words found", Toast.LENGTH_LONG).show();
-
         } else {
-            String words = "";
 
-            // Get the words
-            int index = mCursor.getColumnIndex(UserDictionary.Words.WORD);
-            words = iterateThroughCursor(mCursor, index, words);
+            // Defines a list of columns to retrieve from the Cursor and load into an output row
+            String[] mWordListColumns =
+                    {
+                            UserDictionary.Words.WORD,   // Contract class constant containing the word column name
+                            UserDictionary.Words.LOCALE,  // Contract class constant containing the locale column name
+                            UserDictionary.Words.APP_ID  // Contract class constant containing the app id column name
+                    };
 
-            // Get the Locales
-            index = mCursor.getColumnIndex(UserDictionary.Words.LOCALE);
-            words += " ------------------- ";
-            mCursor.moveToPosition(-1);
-            words = iterateThroughCursor(mCursor, index, words);
+            // Defines a list of View IDs that will receive the Cursor columns for each row
+            int[] mWordListItems = {R.id.row_word, R.id.row_locale, R.id.row_appId};
 
-            mCursor.close();
-
-            // Change the textView
-            mContactsTextView.setText(words);
+            // Creates a new SimpleCursorAdapter
+            mUserWordsCursorAdapter = new SimpleCursorAdapter(
+                    getApplicationContext(),               // The application's Context object
+                    R.layout.wordlist_row,                  // A layout in XML for one row in the ListView
+                    mCursor,                               // The result from the query
+                    mWordListColumns,                      // A string array of column names in the cursor
+                    mWordListItems,                        // An integer array of view IDs in the row layout
+                    0);
+            mUserWordsListView.setAdapter(mUserWordsCursorAdapter);
         }
     }
 
+    /**
+     * Nor used anymore
+     */
     private String iterateThroughCursor(Cursor cursor, int index, String words) {
         /*
         * Moves to the next row in the cursor. Before the first movement in the cursor, the
